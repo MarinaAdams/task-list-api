@@ -1,6 +1,5 @@
 from flask import abort, make_response
 from ..db import db
-from flask import jsonify
 
 def validate_model(cls, model_id):
     try:
@@ -29,7 +28,7 @@ def create_model(cls, model_data):
     db.session.add(new_model)
     db.session.commit()
 
-    return jsonify({cls.__name__.lower(): new_model.to_dict()}), 201
+    return ({cls.__name__.lower(): new_model.to_dict()}), 201
 
 def get_models_with_filters(cls, filters=None):
     query = db.select(cls)
