@@ -5,19 +5,19 @@ from .routes.task_routes import bp as tasks_bp
 from .routes.goal_routes import bp as goals_bp
 import os
 
-def create_app(config=None):
+def create_app(config=None): # Factory function, creates and returns Flask app
     app = Flask(__name__)
 
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # saves memory
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI') # sets db/s, differend db/s for different goals
 
     if config:
         # Merge `config` into the app's configuration
         # to override the app's default settings for testing
         app.config.update(config)
 
-    db.init_app(app)
-    migrate.init_app(app, db)
+    db.init_app(app) # Initializes db with Flask app
+    migrate.init_app(app, db) # Sets up Flask-Migrate (Alembic)
 
     # Register Blueprints here
     app.register_blueprint(tasks_bp)

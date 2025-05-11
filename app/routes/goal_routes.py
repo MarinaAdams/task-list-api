@@ -16,7 +16,6 @@ def add_tasks_to_goal(goal_id):
     goal = validate_model(Goal, goal_id)
     request_body = request.get_json()
     task_ids = request_body.get("task_ids", [])
-
     goal.tasks = []
 
     for task_id in task_ids:
@@ -30,7 +29,6 @@ def add_tasks_to_goal(goal_id):
 @bp.get("/<goal_id>/tasks")
 def get_tasks_of_goal(goal_id):
     goal = validate_model(Goal, goal_id)
-
     tasks = [task.to_dict() for task in goal.tasks]
 
     return {"id": goal.id, "title": goal.title, "tasks": tasks}, 200
@@ -38,11 +36,9 @@ def get_tasks_of_goal(goal_id):
 @bp.get("")
 def get_all_goal():
     query = db.select(Goal)
-
     title_param = request.args.get("title")
     if title_param:
         query = query.where(Goal.title.ilike(f"%{title_param}%"))
-
     goals = db.session.scalars(query.order_by(Goal.id))
     goals_response = [goal.to_dict() for goal in goals]
 
@@ -51,13 +47,13 @@ def get_all_goal():
 @bp.get("/<goal_id>")
 def get_one_goal(goal_id):
     goal = validate_model(Goal, goal_id)
+    
     return  {"goal": goal.to_dict()}
 
 @bp.put("/<goal_id>")
 def update_goal_by_id(goal_id):
     goal = validate_model(Goal, goal_id)
     request_body = request.get_json()
-
     goal.title = request_body["title"]
     db.session.commit()
 
