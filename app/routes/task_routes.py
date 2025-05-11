@@ -50,7 +50,7 @@ def mark_complete(task_id):
     }
 
     response = requests.post(slack_url, headers=headers, json=data)  
-    return make_response(task.to_dict(), 200)
+    return make_response(task.to_dict(), 204)
 
 @bp.patch("/<task_id>/mark_incomplete")
 def mark_incomplete(task_id):
