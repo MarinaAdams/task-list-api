@@ -63,7 +63,7 @@ def mark_incomplete(task_id):
 @bp.get("/<task_id>")
 def get_one_task(task_id):
     task = validate_model(Task, task_id)
-    return ({"task": task.to_dict()})
+    return {"task": task.to_dict()}
 
 @bp.put("/<task_id>")
 def update_task(task_id):
@@ -74,7 +74,7 @@ def update_task(task_id):
     task.description = request_body["description"]
     db.session.commit()
 
-    return Response(status=204, mimetype="application/json") # 204 No Content
+    return Response(status=204, mimetype="application/json") 
 
 @bp.delete("/<task_id>")
 def delete_task(task_id):
