@@ -8,7 +8,7 @@ from datetime import datetime
 import os
 import requests
 
-bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks") # Declares a Blueprint for all routes starting with /tasks
+bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks") 
 
 @bp.post("")
 def create_task():

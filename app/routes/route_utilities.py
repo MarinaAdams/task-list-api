@@ -1,8 +1,7 @@
 from flask import abort, make_response
 from ..db import db
 
-# Helper functions, exist separately, repetitive
-def validate_model(cls, model_id): # Defines a reusable function to find a model instance by id
+def validate_model(cls, model_id): 
     try:
         model_id = int(model_id)
     except:
@@ -18,7 +17,7 @@ def validate_model(cls, model_id): # Defines a reusable function to find a model
     
     return model
 
-def create_model(cls, model_data): # Defines a function to create a new model instance (Task or Goal) using a dictionary
+def create_model(cls, model_data): 
     try:
         new_model = cls.from_dict(model_data)
         
@@ -26,12 +25,12 @@ def create_model(cls, model_data): # Defines a function to create a new model in
         response = {"details": "Invalid data"}
         abort(make_response(response, 400))
     
-    db.session.add(new_model) # Adds the new model to the database and saves it
+    db.session.add(new_model) 
     db.session.commit()
 
     return ({cls.__name__.lower(): new_model.to_dict()}), 201
 
-def get_models_with_filters(cls, filters=None): # Fetches multiple records of a model (tasks/goals), optionally filtering by query string values
+def get_models_with_filters(cls, filters=None): 
     query = db.select(cls)
     
     if filters:
@@ -39,7 +38,7 @@ def get_models_with_filters(cls, filters=None): # Fetches multiple records of a 
             if hasattr(cls, attribute):
                 query = query.where(getattr(cls, attribute).ilike(f"%{value}%"))
 
-    models = db.session.scalars(query.order_by(cls.id)) # Executes the query and sorts results by id
-    models_response = [model.to_dict() for model in models] # Converts all model instances to dictionaries for JSON output
+    models = db.session.scalars(query.order_by(cls.id)) 
+    models_response = [model.to_dict() for model in models] 
 
     return models_response
