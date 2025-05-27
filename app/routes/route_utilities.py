@@ -1,3 +1,4 @@
+import os, requests
 from flask import abort, make_response
 
 from ..db import db
@@ -43,3 +44,20 @@ def get_models_with_filters(cls, filters=None):
     models_response = [model.to_dict() for model in models] 
 
     return models_response
+
+def call_slack_api(task):
+    slack_url = "https://slack.com/api/chat.postMessage"
+    slack_token = os.environ.get("SLACKBOT_TOKEN")
+
+    headers = {
+        "Authorization": f"Bearer {slack_token}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "channel": "test-slack-api",
+        "text": f"Someone just completed the task {task.title}"
+    }
+
+    responce = requests.post(slack_url, headers=headers, json=data)
+    return responce

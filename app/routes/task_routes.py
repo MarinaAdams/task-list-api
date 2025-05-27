@@ -1,14 +1,11 @@
 from datetime import datetime
-import os
 
 from flask import Blueprint, request, Response, make_response
-import requests
 from dotenv import load_dotenv
 
 from app.models.task import Task
-from .route_utilities import validate_model, create_model, get_models_with_filters
+from .route_utilities import validate_model, create_model, get_models_with_filters, call_slack_api
 from ..db import db
-
 
 load_dotenv()
 
@@ -31,10 +28,11 @@ def get_all_tasks():
         query = query.order_by(Task.title.asc())
     elif sort_param == "desc":
         query = query.order_by(Task.title.desc())
+    else:
+        query = query.order_by(Task.id)
 
     tasks = db.session.scalars(query).all()  
-
-    return [task.to_dict() for task in tasks], 200  
+    return [task.to_dict() for task in tasks] 
 
 
 @bp.patch("/<task_id>/mark_complete")
@@ -43,20 +41,9 @@ def mark_complete(task_id):
     task.completed_at = datetime.today()
     db.session.commit()
 
-    slack_url = "https://slack.com/api/chat.postMessage"
-    slack_token = os.environ.get("SLACKBOT_TOKEN")
-
-    headers = {
-        "Authorization": f"Bearer {slack_token}",
-        "Content-Type": "application/json"
-    }
-
-    data = {
-        "channel": "test-slack-api",
-        "text": f"Someone just completed the task {task.title}"
-    }
-
-    response = requests.post(slack_url, headers=headers, json=data) # ?? check response
+    call_slack_api(task)
+    
+    # ?? check response
     # if response.status_code != 200:
     #     abort(make_response({"details": "Slack error"}, 500))
 

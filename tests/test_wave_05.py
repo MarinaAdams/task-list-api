@@ -89,11 +89,15 @@ def test_update_goal(client, one_goal):
     # ---- Complete Act Here ----
     response = client.put("/goals/1", json={"title": "Updated Goal Title"})
     # Assert
+    query = db.select(Goal).where(Goal.id == 1)
+    goal = db.session.scalar(query)
     # ---- Complete Assertions Here ----
     # assertion 1 goes here
-    # assertion 2 goes here
-    # assertion 3 goes here
     assert response.status_code == 204
+    # assertion 2 goes here
+    assert goal.title == "Updated Goal Title"
+    # assertion 3 goes here 
+    assert goal.id == 1
 
     get_response = client.get("/goals/1")
     get_body = get_response.get_json()
@@ -118,10 +122,11 @@ def test_update_goal_not_found(client):
     # Assert
     # ---- Complete Assertions Here ----
     # assertion 1 goes here
-    # assertion 2 goes here
-    # ---- Complete Assertions Here ----
     assert response.status_code == 404
+    # assertion 2 goes here
     assert response_body == {"details": "Goal id 1 not found"}
+    # ---- Complete Assertions Here ----
+
 
 # @pytest.mark.skip(reason="No way to test this feature yet")
 def test_delete_goal(client, one_goal):
