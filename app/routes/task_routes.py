@@ -1,20 +1,26 @@
+from datetime import datetime
+import os
+
 from flask import Blueprint, request, Response, make_response
+import requests
+from dotenv import load_dotenv
+
 from app.models.task import Task
 from .route_utilities import validate_model, create_model, get_models_with_filters
 from ..db import db
-from dotenv import load_dotenv
+
+
 load_dotenv()
-from datetime import datetime
-import os
-import requests
 
 bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks") 
+
 
 @bp.post("")
 def create_task():
     request_body = request.get_json()
     
     return create_model(Task, request_body)
+
 
 @bp.get("")
 def get_all_tasks():
@@ -29,6 +35,7 @@ def get_all_tasks():
     tasks = db.session.scalars(query).all()  
 
     return [task.to_dict() for task in tasks], 200  
+
 
 @bp.patch("/<task_id>/mark_complete")
 def mark_complete(task_id):
@@ -49,9 +56,12 @@ def mark_complete(task_id):
         "text": f"Someone just completed the task {task.title}"
     }
 
-    response = requests.post(slack_url, headers=headers, json=data) 
+    response = requests.post(slack_url, headers=headers, json=data) # ?? check response
+    # if response.status_code != 200:
+    #     abort(make_response({"details": "Slack error"}, 500))
 
     return make_response(task.to_dict(), 204)
+
 
 @bp.patch("/<task_id>/mark_incomplete")
 def mark_incomplete(task_id):
@@ -61,11 +71,13 @@ def mark_incomplete(task_id):
     
     return Response(status=204, mimetype="application/json")
 
+
 @bp.get("/<task_id>")
 def get_one_task(task_id):
     task = validate_model(Task, task_id)
     
     return {"task": task.to_dict()}
+
 
 @bp.put("/<task_id>")
 def update_task(task_id):
@@ -77,6 +89,7 @@ def update_task(task_id):
 
     return Response(status=204, mimetype="application/json") 
 
+
 @bp.delete("/<task_id>")
 def delete_task(task_id):
     task = validate_model(Task, task_id)
@@ -84,4 +97,3 @@ def delete_task(task_id):
     db.session.commit()
 
     return Response(status=204, mimetype="application/json")
-
