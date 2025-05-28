@@ -10,12 +10,13 @@ from datetime import datetime
 
 load_dotenv()
 
+
 @pytest.fixture
 def app():
     # create the app with a test configuration
     test_config = {
         "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": os.environ.get('SQLALCHEMY_TEST_DATABASE_URI')
+        "SQLALCHEMY_DATABASE_URI": os.environ.get("SQLALCHEMY_TEST_DATABASE_URI"),
     }
     app = create_app(test_config)
 
@@ -42,9 +43,11 @@ def client(app):
 # This fixture creates a task and saves it in the database
 @pytest.fixture
 def one_task(app):
-    new_task = Task(title="Go on my daily walk 🏞", 
-                    description="Notice something new every day", 
-                    completed_at=None)
+    new_task = Task(
+        title="Go on my daily walk 🏞",
+        description="Notice something new every day",
+        completed_at=None,
+    )
     db.session.add(new_task)
     db.session.commit()
 
@@ -55,17 +58,15 @@ def one_task(app):
 # them in the database
 @pytest.fixture
 def three_tasks(app):
-    db.session.add_all([
-        Task(title="Water the garden 🌷", 
-            description="", 
-            completed_at=None),
-        Task(title="Answer forgotten email 📧", 
-            description="", 
-            completed_at=None),
-        Task(title="Pay my outstanding tickets 😭", 
-            description="", 
-            completed_at=None)
-    ])
+    db.session.add_all(
+        [
+            Task(title="Water the garden 🌷", description="", completed_at=None),
+            Task(title="Answer forgotten email 📧", description="", completed_at=None),
+            Task(
+                title="Pay my outstanding tickets 😭", description="", completed_at=None
+            ),
+        ]
+    )
     db.session.commit()
 
 
@@ -75,9 +76,11 @@ def three_tasks(app):
 # valid completed_at date
 @pytest.fixture
 def completed_task(app):
-    new_task = Task(title="Go on my daily walk 🏞", 
-                    description="Notice something new every day", 
-                    completed_at=datetime.now())
+    new_task = Task(
+        title="Go on my daily walk 🏞",
+        description="Notice something new every day",
+        completed_at=datetime.now(),
+    )
     db.session.add(new_task)
     db.session.commit()
 
