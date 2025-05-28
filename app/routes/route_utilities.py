@@ -39,7 +39,7 @@ def get_models_with_filters(cls, filters=None):
     sort_param = None
 
     if filters:
-        filters_dict = dict(filters)  # Convert ImmutableMultiDict to dict
+        filters_dict = dict(filters)  
         sort_param = filters_dict.pop("sort", None)
 
         for attribute, value in filters_dict.items():
